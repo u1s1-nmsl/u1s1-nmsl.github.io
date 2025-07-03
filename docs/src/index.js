@@ -1,3 +1,4 @@
-import confuse from './confuse/index.js'
+import menu from './menu.js'
 
-confuse(document.body)
+document.body.style.margin = '0'
+menu(document.body)

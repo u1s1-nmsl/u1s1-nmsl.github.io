@@ -207,4 +207,13 @@ dec.textContent = '解密'
 reset.textContent = '重置'
 clear.textContent = '清空'
 
-export default dom => dom.append(container)
+
+const main = document.createElement('div')
+
+const title = document.createElement('div')
+title.textContent = '图片混淆'
+title.style.marginBottom = '20px'
+
+main.append(title, container)
+
+export default dom => dom.append(main)
