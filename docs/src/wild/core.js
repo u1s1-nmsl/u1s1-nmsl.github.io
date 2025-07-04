@@ -2,7 +2,7 @@
 const defaultMap = ['嗷', '呜', '啊', '~']
 // 加密
 const enc = (data, map = defaultMap) => {
-  const nums = [...data]
+  const values = [...data].values()
     // 获取unicode码
     .map(value => value.codePointAt(0))
     // 拆分为4位
@@ -13,12 +13,13 @@ const enc = (data, map = defaultMap) => {
     // 拆分为2位
     .map(num => [((num & 0xf) >> 2) & 0x3, ((num & 0xf) >> 0) & 0x3])
     .flatMap(i => i)
-    
-  return [3, 1, 0, ...nums, 2]
     // 取字典
     .map(index => map[index])
+    .toArray()
     // 拼接
     .join('')
+    
+  return `${map[3]}${map[1]}${map[0]}${values}${map[2]}` 
 }
 
 // 解密
@@ -29,34 +30,24 @@ const dec = (data) => {
     [data.at(2)]: 0,
     [data.at(-1)]: 2
   }
-  return [...data.slice(3, -1)]
+  
+  return data.slice(3, -1)
+    // 八个一组
+    .match(/.{1,8}/g)
+    .values()
     // 还原
-    .map(value => map[value])
-    // 两个一组
-    .reduce((acc, cur, index) => {
-      const i = index % 2
-      i === 0 && acc.push([])
-      acc.at(-1)[i] = cur
-      return acc
-    }, [])
-    // 合并为16进制
-    .map(([a, b]) => (parseInt(a) << 2) + parseInt(b))
-    // 变形
-    .map((num, index) => (num - index) & 0xf)
-    // 四个一组
-    .reduce((acc, cur, index) => {
-      const i = index % 4
-      i === 0 && acc.push([])
-      acc.at(-1)[i] = cur
-      return acc
-    }, [])
-    // 合并
-    .map(([a, b, c, d]) => (a << 12) + (b << 8) + (c << 4) + (d << 0))
+    .map((values, i) =>
+      values.match(/.{1,2}/g)
+        .values()
+        .map(a => Array.from(a).map(b => map[b]))
+        .map(([a, b], j) => (((a << 2) + b - (i * 4 + j) & 0xf) & 0xf) << (3 - j) * 4)
+        .reduce((a, b) => a + b)
+    )
     // 还原
     .map(value => String.fromCodePoint(value))
+    .toArray()
     // 拼接
     .join('')
-    
 }
 
 export default {enc, dec}
