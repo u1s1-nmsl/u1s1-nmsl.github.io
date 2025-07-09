@@ -31,7 +31,7 @@ file.onchange = ({target: {files: [f1, f2]}}) => {
     return 
   }
   
-  const ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d', { willReadFrequently: true })
   
   // 并行处理两张图
   Promise.all([
