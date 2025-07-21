@@ -1,4 +1,4 @@
-// 加密字典
+// md5算法
 const md5 = (str) => {
 
   const rotateLeft = (lValue, iShiftBits) => (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits))
@@ -153,19 +153,19 @@ const md5 = (str) => {
   return wordToHex([a, b, c, d])
 }
 
-
+// 倒序洗牌算法+md5固定因子
 export const amess = (length, key) => {
-  return Array.from({length}, (_, i) => i)
-    .map(i => `${key}${i}`)
-    .map(i => md5(i))
-    .map(i => i.substr(0, 7))
-    .map(i => parseInt(i, 16))
-    .map((v, i) => v % (i + 1))
-    .map((v, i) => [v, i])
-    .reverse()
-    .reduce((a, [v, i]) => ([a[v], a[i]] = [a[i], a[v]], a), Array.from({length}, (_, i) => i))
+  const res = Array.from({length}, (_, i) => i)
+  for(let i = length - 1; i >=0; i--){
+    const j = (parseInt(md5(`${key}${i}`).substr(0, 7), 16) % (i + 1))
+    const k = res[i]
+    res[i] = res[j]
+    res[j] = k
+  }
+  return res
 }
 
+// logistic映射
 export const logistic = (key, height, width) => {
   const perms = Array(height)
   let x = key
@@ -183,7 +183,7 @@ export const logistic = (key, height, width) => {
   return perms
 }
 
-// 一阶希尔伯特曲线
+// 二维空间填充曲线
 export const gilbert2d = (width, height) => {
   const result = []
   const stack = []
@@ -259,14 +259,21 @@ export const gilbert2d = (width, height) => {
 export const pix = ({data, width, height, factor}, core) => {
   // 反过来就是解密
   const ass = factor? (i) => i: ([i, j]) => [j, i]
-  return Array.from({length:width}, (_, i) => i)
-    .map(i => Array.from({length: height}, (_, j) => [i, j]))
-    .flat()
-    // 核心变换
-    .map(core)
-    // 反转变换
-    .map(ass)
-    // 实际坐标
-    .map(([i, j]) => [4 * i, 4 * j])
-    .reduce((a, [i, j]) => ([a[i], a[i+1], a[i+2], a[i+3]] = [data[j], data[j+1], data[j+2], data[j+3]], a), [])
+  const res = Array(data.length)
+  for(let i = 0; i < height; i++){
+    for(let j = 0; j < width; j++){
+      // 正向混淆
+      const point = core([i, j])
+      // 选择方向混淆
+      const [x, y] = ass(point)
+      const n = x * 4
+      const m = y * 4
+      // 交换
+      res[n] = data[m]
+      res[n+1] = data[m+1]
+      res[n+2] = data[m+2]
+      res[n+3] = data[m+3]
+    }
+  }
+  return res
 }

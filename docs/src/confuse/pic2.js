@@ -6,9 +6,12 @@ export default ({data, width, height, factor}, {key}) => {
   const row = logistic(key, width, height)
   
   const core = ([i, j]) => {
-    const n = row[i][j]
-    const m = col[n][i]
-    const x = i + j * width
+    // 第一次混淆取横坐标
+    const n = row[j][i]
+    // 第二次混淆取纵坐标
+    const m = col[n][j]
+
+    const x = j + i * width
     const y = m + n * width
     return [x, y]
   }

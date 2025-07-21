@@ -2,16 +2,15 @@ import {amess, pix} from './common.js'
 
 // 行像素混淆
 export default ({data, width, height, factor}, {key}) => {
-  const x = amess(width, key)
-  const y = amess(height, key)
+  const rx = amess(width, key)
   const core = ([i, j]) => {
-    const a = (x[j % width] + i) % width
-    const b = x[a]
+    // 横向第一次混淆
+    const a = rx[i % width]
+    // 横向第二次混淆
+    const b = rx[(a + j) % width]
     
-    const d = j
-    
-    const e = i + j * width
-    const f = b + d * width
+    const e = j + i * width
+    const f = b + i * width
     return [e, f]
   }
   return pix({data, width, height, factor}, core)
