@@ -1,13 +1,13 @@
 import confuse from './confuse/index.js'
 import phantom from './phantom/index.js'
-import wild from './wild/index.js'
+import cipher from './cipher/index.js'
 import folder from './folder/index.js'
 
 
 const buttons = [
   {text: '图片混淆', action: confuse},
   {text: '幻影坦克', action: phantom},
-  {text: '兽音译者', action: wild},
+  {text: '字符串混淆', action: cipher},
   {text: '图片文件夹', action: folder}
 ]
 

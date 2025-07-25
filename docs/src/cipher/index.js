@@ -1,11 +1,5 @@
-import wild from './core.js'
-
-// 创建容器
-const container = document.createElement('div')
-container.style.display = 'flex'
-container.style.gap = '20px'
-container.style.margin = '0'
-container.style.fontFamily = 'Arial, sans-serif'
+import beast from './beast.js'
+import meow from './meow.js'
 
 // 创建左侧文本区域
 const div1 = document.createElement('div')
@@ -56,18 +50,58 @@ right.placeholder = '输入明文'
 
 div3.appendChild(right)
 
+
+// 创建容器
+const div0 = document.createElement('div')
+div0.style.display = 'flex'
+div0.style.gap = '20px'
+div0.style.margin = '0'
+div0.style.fontFamily = 'Arial, sans-serif'
 // 组装所有元素
-container.append(div1, div2, div3)
+div0.append(div1, div2, div3)
+
+
+
+//---
+const fieldset = document.createElement('fieldset')
+const legend = document.createElement('legend')
+const label0 = document.createElement('label')
+const model0 = document.createElement('input')
+const label1 = document.createElement('label')
+const model1 = document.createElement('input')
+
+fieldset.style.padding = '10px'
+legend.textContent = '混淆模式'
+model0.type = model1.type = 'radio'
+model0.checked = true
+model0.name = model1.name = 'selected'
+label0.textContent = '兽音译者'
+label1.textContent = '喵喵隐者(9.1)'
+model0.value = 0
+model1.value = 1
+label0.style.marginRight = '10px'
+
+label0.prepend(model0)
+label1.prepend(model1)
+fieldset.append(legend, label0, label1)
+
+const div = document.createElement('div')
+
+div.append(fieldset)
+div.style.marginBottom = '20px'
+
+const container = document.createElement('div')
+container.append(div, div0)
 
 // 添加按钮事件
-decrypt.onclick = () => left.value && (right.value = wild.dec(left.value))
+decrypt.onclick = () => left.value && (right.value = [beast, meow][[model0, model1].find(radio => radio.checked)?.value].dec(left.value))
 
-encrypt.onclick = () => right.value && (left.value = wild.enc(right.value))
+encrypt.onclick = () => right.value && (left.value = [beast, meow][[model0, model1].find(radio => radio.checked)?.value].enc(right.value))
 
 const main = document.createElement('div')
 
 const title = document.createElement('div')
-title.textContent = '兽音译者'
+title.textContent = '字符串混淆'
 title.style.marginBottom = '20px'
 
 main.append(title, container)
